@@ -12,7 +12,7 @@ import ConfettiAnimation from "../components/ConfettiAnimation";
 
 export default function DashboardScreen() {
   const { mockData, achievements } = useHealthStore();
-  const { profile } = useUserStore();
+  const { profile, resetOnboarding } = useUserStore();
   const [showConfetti, setShowConfetti] = useState(false);
   
   const getGreeting = () => {
@@ -47,9 +47,17 @@ export default function DashboardScreen() {
                   {getName()}, here's your health overview
                 </Text>
               </View>
-              <Pressable className="bg-ivory/20 rounded-full p-2">
-                <Ionicons name="notifications-outline" size={24} color="#F9F6F1" />
-              </Pressable>
+              <View className="flex-row space-x-2">
+                <Pressable 
+                  onPress={resetOnboarding}
+                  className="bg-gold/20 rounded-full p-2"
+                >
+                  <Ionicons name="refresh-outline" size={20} color="#D4AF37" />
+                </Pressable>
+                <Pressable className="bg-ivory/20 rounded-full p-2">
+                  <Ionicons name="notifications-outline" size={24} color="#F9F6F1" />
+                </Pressable>
+              </View>
             </View>
           </View>
 
@@ -208,6 +216,24 @@ export default function DashboardScreen() {
               </ScrollView>
             </View>
           )}
+
+          {/* Development Reset Button */}
+          <View className="mb-8 bg-ivory/10 rounded-xl p-4">
+            <Text className="text-ivory text-lg font-semibold mb-2 text-center">
+              🔧 Development Tools
+            </Text>
+            <Text className="text-ivory/60 text-sm text-center mb-4">
+              Reset onboarding to test the complete flow
+            </Text>
+            <Pressable
+              onPress={resetOnboarding}
+              className="bg-gold rounded-xl py-3 px-6"
+            >
+              <Text className="text-navy font-semibold text-center">
+                Reset Onboarding Flow
+              </Text>
+            </Pressable>
+          </View>
         </ScrollView>
         
         <ConfettiAnimation 

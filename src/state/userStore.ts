@@ -17,6 +17,7 @@ interface UserState {
   previousOnboardingStep: () => void;
   completeOnboardingStep: (stepName: string) => void;
   completeOnboarding: () => void;
+  resetOnboarding: () => void;
   updateSettings: (settings: Partial<AppSettings>) => void;
   setFirstLaunch: (isFirst: boolean) => void;
 }
@@ -110,6 +111,20 @@ export const useUserStore = create<UserState>()(
             completedAt: new Date().toISOString(),
           },
           isFirstLaunch: false,
+        });
+      },
+
+      resetOnboarding: () => {
+        set({
+          profile: null,
+          onboardingProgress: {
+            currentStep: 0,
+            totalSteps: 11,
+            completedSteps: [],
+            isCompleted: false,
+            startedAt: new Date().toISOString(),
+          },
+          isFirstLaunch: true,
         });
       },
 
