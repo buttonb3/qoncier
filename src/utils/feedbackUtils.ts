@@ -121,3 +121,61 @@ export const celebrateSelection = async (): Promise<void> => {
     console.warn("Failed to celebrate selection:", error);
   }
 };
+
+// Achievement unlock celebration with multiple pulses
+export const celebrateAchievement = async (): Promise<void> => {
+  try {
+    // Triple pulse pattern for achievement
+    await triggerImpactHaptics("heavy");
+    setTimeout(async () => {
+      await triggerImpactHaptics("medium");
+    }, 100);
+    setTimeout(async () => {
+      await triggerImpactHaptics("light");
+    }, 200);
+  } catch (error) {
+    console.warn("Failed to celebrate achievement:", error);
+  }
+};
+
+// Ring completion celebration - subtle but satisfying
+export const celebrateRingCompletion = async (): Promise<void> => {
+  try {
+    await triggerImpactHaptics("light");
+  } catch (error) {
+    console.warn("Failed to celebrate ring completion:", error);
+  }
+};
+
+// Journey begin celebration - final triumphant moment
+export const celebrateJourneyBegin = async (): Promise<void> => {
+  try {
+    // Success notification followed by impact
+    await triggerSuccessHaptics();
+    setTimeout(async () => {
+      await triggerImpactHaptics("medium");
+    }, 150);
+  } catch (error) {
+    console.warn("Failed to celebrate journey begin:", error);
+  }
+};
+
+// Enhanced success celebration with multiple feedback types
+export const celebrateExtendedSuccess = async (): Promise<void> => {
+  try {
+    // Primary success haptic
+    await triggerSuccessHaptics();
+    
+    // Follow-up impact for emphasis
+    setTimeout(async () => {
+      await triggerImpactHaptics("light");
+    }, 200);
+    
+    // Final subtle confirmation
+    setTimeout(async () => {
+      await triggerSelectionHaptics();
+    }, 400);
+  } catch (error) {
+    console.warn("Failed to celebrate extended success:", error);
+  }
+};

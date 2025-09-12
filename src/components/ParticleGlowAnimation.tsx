@@ -39,10 +39,13 @@ export default function ParticleGlowAnimation({
 }: ParticleGlowAnimationProps) {
   const masterOpacity = useSharedValue(0);
 
-  // Generate elegant light orbs
-  const particles: Particle[] = Array.from({ length: 18 }, (_, i) => {
-    const angle = (i / 18) * Math.PI * 2;
-    const radius = 80 + Math.random() * 120;
+  // Generate elegant light orbs with multiple waves
+  const particles: Particle[] = Array.from({ length: 24 }, (_, i) => {
+    const waveIndex = Math.floor(i / 8); // 3 waves of 8 particles each
+    const particleInWave = i % 8;
+    const angle = (particleInWave / 8) * Math.PI * 2;
+    const baseRadius = 60 + waveIndex * 40; // Waves at different distances
+    const radius = baseRadius + Math.random() * 60;
     const x = centerX + Math.cos(angle) * radius;
     const y = centerY + Math.sin(angle) * radius;
     
@@ -50,10 +53,10 @@ export default function ParticleGlowAnimation({
       id: i,
       x,
       y,
-      size: 8 + Math.random() * 8, // 8-16px
-      color: ["#D4AF37", "#F9F6F1", "#1C1C2E"][Math.floor(Math.random() * 3)],
-      opacity: 0.3 + Math.random() * 0.5, // 0.3-0.8
-      delay: i * 50, // Staggered timing
+      size: 6 + Math.random() * 12, // 6-18px for more variety
+      color: ["#D4AF37", "#F9F6F1", "#1C1C2E", "#FFD700", "#E6E6FA"][Math.floor(Math.random() * 5)],
+      opacity: 0.4 + Math.random() * 0.6, // 0.4-1.0 for more brightness
+      delay: waveIndex * 500 + particleInWave * 75, // Wave-based staggered timing
     };
   });
 
@@ -61,12 +64,12 @@ export default function ParticleGlowAnimation({
     if (show) {
       masterOpacity.value = withTiming(1, { duration: 300 });
       
-      // Complete after animation sequence
+      // Complete after extended animation sequence
       const timer = setTimeout(() => {
         if (onComplete) {
           runOnJS(onComplete)();
         }
-      }, 3000);
+      }, 4000); // Extended from 3000ms to 4000ms
       
       return () => clearTimeout(timer);
     } else {
@@ -157,11 +160,11 @@ function ParticleOrb({ particle }: ParticleOrbProps) {
       )
     );
     
-    // Fade out after 2.5 seconds
+    // Fade out after 3.5 seconds for longer celebration
     setTimeout(() => {
-      opacity.value = withTiming(0, { duration: 500 });
-      scale.value = withTiming(0, { duration: 500 });
-    }, 2500);
+      opacity.value = withTiming(0, { duration: 800 });
+      scale.value = withTiming(0, { duration: 800 });
+    }, 3500);
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({

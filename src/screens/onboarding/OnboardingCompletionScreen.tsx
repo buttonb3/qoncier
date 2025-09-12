@@ -8,7 +8,17 @@ import ParticleGlowAnimation from "../../components/ParticleGlowAnimation";
 import GradientBurstAnimation from "../../components/GradientBurstAnimation";
 import ProfileCompleteBadge from "../../components/ProfileCompleteBadge";
 import DashboardRevealAnimation from "../../components/DashboardRevealAnimation";
-import { celebrateSuccess } from "../../utils/feedbackUtils";
+import FitnessRingsAnimation from "../../components/FitnessRingsAnimation";
+import InspirationalTextAnimation from "../../components/InspirationalTextAnimation";
+import AchievementUnlockAnimation from "../../components/AchievementUnlockAnimation";
+import BreathingBackgroundAnimation from "../../components/BreathingBackgroundAnimation";
+import { 
+  celebrateSuccess, 
+  celebrateAchievement, 
+  celebrateRingCompletion, 
+  celebrateJourneyBegin,
+  celebrateExtendedSuccess 
+} from "../../utils/feedbackUtils";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -27,6 +37,10 @@ export default function OnboardingCompletionScreen() {
   const [showBurst, setShowBurst] = useState(false);
   const [showBadge, setShowBadge] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showFitnessRings, setShowFitnessRings] = useState(false);
+  const [showInspirationalText, setShowInspirationalText] = useState(false);
+  const [showAchievement, setShowAchievement] = useState(false);
+  const [showBreathingBackground, setShowBreathingBackground] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   
   const overlayOpacity = useSharedValue(1);
@@ -66,43 +80,61 @@ export default function OnboardingCompletionScreen() {
     if (reduceMotion) {
       // Simplified animation for reduced motion
       overlayOpacity.value = withTiming(0, { duration: 300 });
-      await celebrateSuccess();
+      await celebrateExtendedSuccess();
       setAnimationPhase("complete");
       return;
     }
     
-    // Full animation sequence for normal motion
-    // Phase 1: Gradient burst (immediate)
+    // Extended animation sequence for normal motion (3 seconds total)
+    // Phase 1: Breathing background and gradient burst (immediate)
+    setShowBreathingBackground(true);
     setShowBurst(true);
     overlayOpacity.value = withTiming(0, { duration: 800 });
     
-    // Phase 2: Particle emission (200ms delay)
+    // Phase 2: Particle emission (400ms delay - extended from 200ms)
     setTimeout(() => {
       setShowParticles(true);
-    }, 200);
+    }, 400);
     
-    // Phase 3: Badge appearance (400ms delay)
+    // Phase 3: Inspirational text begins (500ms delay)
+    setTimeout(() => {
+      setShowInspirationalText(true);
+    }, 500);
+    
+    // Phase 4: Badge appearance (800ms delay - extended from 400ms)
     setTimeout(() => {
       setShowBadge(true);
       setAnimationPhase("celebrating");
-    }, 400);
+    }, 800);
     
-    // Phase 4: Audio/Haptic feedback (500ms delay)
+    // Phase 5: Achievement unlock (1000ms delay - extended from 500ms)
     setTimeout(async () => {
-      await celebrateSuccess();
+      setShowAchievement(true);
+      await celebrateAchievement();
       setShowConfetti(true);
-    }, 500);
+    }, 1000);
     
-    // Phase 5: Dashboard reveal (600ms delay)
+    // Phase 6: Fitness rings animation (1200ms delay)
+    setTimeout(async () => {
+      setShowFitnessRings(true);
+      await celebrateRingCompletion();
+    }, 1200);
+    
+    // Phase 7: Dashboard reveal (1500ms delay - extended from 600ms)
     setTimeout(() => {
       setShowDashboard(true);
       setAnimationPhase("revealing");
-    }, 600);
+    }, 1500);
     
-    // Phase 6: Complete (2000ms total)
+    // Phase 8: Journey celebration (2500ms delay)
+    setTimeout(async () => {
+      await celebrateJourneyBegin();
+    }, 2500);
+    
+    // Phase 9: Complete (3000ms total - extended from 2000ms)
     setTimeout(() => {
       setAnimationPhase("complete");
-    }, 2000);
+    }, 3000);
   }, [animationPhase, reduceMotion, overlayOpacity]);
 
   const handleComplete = useCallback(async () => {
@@ -260,15 +292,44 @@ export default function OnboardingCompletionScreen() {
         </View>
       )}
       
+      {/* Breathing Background Animation */}
+      <BreathingBackgroundAnimation 
+        show={showBreathingBackground}
+        duration={4000}
+      />
+      
+      {/* Fitness Rings Animation */}
+      <FitnessRingsAnimation 
+        show={showFitnessRings}
+        centerX={touchPosition.x}
+        centerY={touchPosition.y - 100}
+        onComplete={() => setShowFitnessRings(false)}
+      />
+      
+      {/* Inspirational Text Animation */}
+      <InspirationalTextAnimation 
+        show={showInspirationalText}
+        centerY={touchPosition.y + 150}
+        onComplete={() => setShowInspirationalText(false)}
+      />
+      
+      {/* Achievement Unlock Animation */}
+      <AchievementUnlockAnimation 
+        show={showAchievement}
+        centerX={touchPosition.x}
+        centerY={touchPosition.y - 50}
+        onComplete={() => setShowAchievement(false)}
+      />
+      
       {/* Dashboard Reveal */}
       <DashboardRevealAnimation 
         show={showDashboard}
         delay={0}
         onComplete={() => {
-          // Auto-complete after dashboard reveal
+          // Auto-complete after dashboard reveal (extended timing)
           setTimeout(() => {
             handleComplete();
-          }, 1000);
+          }, 2000); // Extended from 1000ms to 2000ms
         }}
       />
     </OnboardingContainer>
