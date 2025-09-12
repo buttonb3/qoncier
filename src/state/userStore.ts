@@ -13,6 +13,9 @@ interface UserState {
   setProfile: (profile: UserProfile) => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
   setOnboardingProgress: (progress: OnboardingProgress) => void;
+  nextOnboardingStep: () => void;
+  previousOnboardingStep: () => void;
+  completeOnboardingStep: (stepName: string) => void;
   completeOnboarding: () => void;
   updateSettings: (settings: Partial<AppSettings>) => void;
   setFirstLaunch: (isFirst: boolean) => void;
@@ -66,6 +69,38 @@ export const useUserStore = create<UserState>()(
       },
 
       setOnboardingProgress: (progress) => set({ onboardingProgress: progress }),
+      
+      nextOnboardingStep: () => {
+        const current = get().onboardingProgress;
+        set({
+          onboardingProgress: {
+            ...current,
+            currentStep: Math.min(current.currentStep + 1, current.totalSteps),
+          },
+        });
+      },
+
+      previousOnboardingStep: () => {
+        const current = get().onboardingProgress;
+        set({
+          onboardingProgress: {
+            ...current,
+            currentStep: Math.max(current.currentStep - 1, 1),
+          },
+        });
+      },
+
+      completeOnboardingStep: (stepName) => {
+        const current = get().onboardingProgress;
+        if (!current.completedSteps.includes(stepName)) {
+          set({
+            onboardingProgress: {
+              ...current,
+              completedSteps: [...current.completedSteps, stepName],
+            },
+          });
+        }
+      },
       
       completeOnboarding: () => {
         set({

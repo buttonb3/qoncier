@@ -1,57 +1,73 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useUserStore } from "../../state/userStore";
+import OnboardingContainer from "../../components/onboarding/OnboardingContainer";
+import OnboardingButton from "../../components/onboarding/OnboardingButton";
+import OnboardingCard from "../../components/onboarding/OnboardingCard";
 
 export default function OnboardingWelcomeScreen() {
-  const { completeOnboarding } = useUserStore();
+  const navigation = useNavigation();
+  const { nextOnboardingStep, completeOnboardingStep } = useUserStore();
 
-  const handleSkipOnboarding = () => {
-    completeOnboarding();
+  const handleGetStarted = () => {
+    completeOnboardingStep("welcome");
+    nextOnboardingStep();
+    navigation.navigate("PersonalInfo" as never);
   };
 
   return (
-    <LinearGradient
-      colors={["#1C1C2E", "#F9F6F1"]} // Navy to Ivory gradient
-      style={{ flex: 1 }}
-    >
-      <SafeAreaView className="flex-1 px-6">
-        <View className="flex-1 justify-center items-center">
-          <Text className="text-ivory text-4xl font-bold text-center mb-4">
-            Welcome to Qoncier
-          </Text>
-          <Text className="text-ivory/80 text-lg text-center mb-8">
-            Your AI-powered personal health assistant
-          </Text>
-          
-          <View className="w-full space-y-4">
-            <Pressable
-              onPress={handleSkipOnboarding}
-              className="bg-gold rounded-xl py-4 px-8"
-            >
-              <Text className="text-navy text-lg font-semibold text-center">
-                Get Started
+    <OnboardingContainer currentStep={1} totalSteps={11} showProgress={false}>
+      <View className="flex-1 justify-center py-8">
+        <OnboardingCard
+          title="Welcome to Qoncier"
+          description="Your AI-powered personal health assistant"
+          icon="heart"
+          variant="highlight"
+        >
+          <View className="mt-6 space-y-4">
+            <View className="bg-navy/10 rounded-lg p-3">
+              <Text className="text-navy font-semibold text-center">
+                🤖 AI Health Assistant
               </Text>
-            </Pressable>
+              <Text className="text-ash text-sm text-center mt-1">
+                Get personalized health guidance 24/7
+              </Text>
+            </View>
             
-            <Pressable
-              onPress={handleSkipOnboarding}
-              className="border border-ivory/30 rounded-xl py-4 px-8"
-            >
-              <Text className="text-ivory text-lg font-semibold text-center">
-                Skip for Now
+            <View className="bg-navy/10 rounded-lg p-3">
+              <Text className="text-navy font-semibold text-center">
+                📊 Comprehensive Tracking
               </Text>
-            </Pressable>
+              <Text className="text-ash text-sm text-center mt-1">
+                Monitor symptoms, medications, and nutrition
+              </Text>
+            </View>
+            
+            <View className="bg-navy/10 rounded-lg p-3">
+              <Text className="text-navy font-semibold text-center">
+                🏆 Gamified Wellness
+              </Text>
+              <Text className="text-ash text-sm text-center mt-1">
+                Achieve health goals with rewards and insights
+              </Text>
+            </View>
           </View>
-        </View>
-        
-        <View className="pb-8">
-          <Text className="text-ivory/60 text-sm text-center">
-            Complete onboarding will be implemented in the next phase
+        </OnboardingCard>
+
+        <View className="bg-ivory/10 rounded-xl p-4 mt-6">
+          <Text className="text-ivory/80 text-sm text-center">
+            ⏱️ Setup takes about 5 minutes
           </Text>
         </View>
-      </SafeAreaView>
-    </LinearGradient>
+      </View>
+
+      <View className="pb-8">
+        <OnboardingButton
+          title="Get Started"
+          onPress={handleGetStarted}
+        />
+      </View>
+    </OnboardingContainer>
   );
 }
