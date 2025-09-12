@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useUserStore } from "../state/userStore";
 import { useHealthStore } from "../state/healthStore";
 import { UserProfile, EmergencyContact } from "../types/health";
+import MedicationsSection from "../components/MedicationsSection";
 
 export default function ProfileScreen() {
   const { profile, settings, updateProfile, updateSettings } = useUserStore();
@@ -182,6 +183,9 @@ export default function ProfileScreen() {
               </View>
             )}
           </View>
+
+          {/* Medications Section */}
+          <MedicationsSection />
 
           {/* Device Connections */}
           <View className="bg-white rounded-xl p-4 mb-6 shadow-sm">

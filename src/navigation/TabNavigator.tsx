@@ -2,10 +2,9 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
-// Import screens (will create these next)
+// Import screens
 import DashboardScreen from "../screens/DashboardScreen";
 import SymptomsScreen from "../screens/SymptomsScreen";
-import MedicationsScreen from "../screens/MedicationsScreen";
 import NutritionScreen from "../screens/NutritionScreen";
 import AssistantScreen from "../screens/AssistantScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -24,9 +23,6 @@ export default function TabNavigator() {
               iconName = focused ? "home" : "home-outline";
               break;
             case "Symptoms":
-              iconName = focused ? "medical" : "medical-outline";
-              break;
-            case "Medications":
               iconName = focused ? "medical" : "medical-outline";
               break;
             case "Nutrition":
@@ -82,13 +78,7 @@ export default function TabNavigator() {
           title: "Symptoms",
         }}
       />
-      <Tab.Screen 
-        name="Medications" 
-        component={MedicationsScreen}
-        options={{
-          title: "Medications",
-        }}
-      />
+
       <Tab.Screen 
         name="Nutrition" 
         component={NutritionScreen}

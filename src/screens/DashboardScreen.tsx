@@ -3,6 +3,7 @@ import { View, Text, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { useHealthStore } from "../state/healthStore";
 import { useUserStore } from "../state/userStore";
 import HealthMetricCard from "../components/HealthMetricCard";
@@ -11,6 +12,7 @@ import QuickActionButton from "../components/QuickActionButton";
 import ConfettiAnimation from "../components/ConfettiAnimation";
 
 export default function DashboardScreen() {
+  const navigation = useNavigation();
   const { mockData, achievements } = useHealthStore();
   const { profile, resetOnboarding } = useUserStore();
   const [showConfetti, setShowConfetti] = useState(false);
@@ -121,13 +123,13 @@ export default function DashboardScreen() {
               <QuickActionButton
                 title="Log Symptom"
                 icon="medical"
-                onPress={() => {}}
+                onPress={() => navigation.navigate("Symptoms" as never)}
                 color="secondary"
               />
               <QuickActionButton
-                title="Take Medication"
+                title="Medications"
                 icon="medical"
-                onPress={() => {}}
+                onPress={() => navigation.navigate("Profile" as never)}
                 color="secondary"
               />
             </View>
@@ -135,13 +137,13 @@ export default function DashboardScreen() {
               <QuickActionButton
                 title="Scan Food"
                 icon="camera"
-                onPress={() => {}}
+                onPress={() => navigation.navigate("Nutrition" as never)}
                 color="accent"
               />
               <QuickActionButton
                 title="Ask Assistant"
                 icon="chatbubbles"
-                onPress={() => {}}
+                onPress={() => navigation.navigate("Assistant" as never)}
                 color="primary"
               />
             </View>
