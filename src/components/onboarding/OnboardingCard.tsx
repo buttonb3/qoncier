@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 interface OnboardingCardProps {
   title: string;
   description?: string;
+  phoneticSpelling?: string;
   icon?: keyof typeof Ionicons.glyphMap;
   children?: React.ReactNode;
   variant?: "default" | "highlight";
@@ -13,6 +14,7 @@ interface OnboardingCardProps {
 export default function OnboardingCard({
   title,
   description,
+  phoneticSpelling,
   icon,
   children,
   variant = "default",
@@ -40,8 +42,14 @@ export default function OnboardingCard({
         {title}
       </Text>
       
+      {phoneticSpelling && (
+        <Text className="text-black text-sm italic text-center mb-2">
+          {phoneticSpelling}
+        </Text>
+      )}
+      
       {description && (
-        <Text className="text-ivory/80 text-base text-center mb-4">
+        <Text className="text-black text-base text-center mb-4">
           {description}
         </Text>
       )}

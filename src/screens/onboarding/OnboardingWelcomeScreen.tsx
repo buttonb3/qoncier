@@ -21,6 +21,7 @@ export default function OnboardingWelcomeScreen() {
       <View className="flex-1 justify-center py-8">
         <OnboardingCard
           title="Welcome to Qoncier"
+          phoneticSpelling="(KON-see-air)"
           description="Your AI-powered personal health assistant"
           icon="heart"
           variant="highlight"
@@ -30,7 +31,7 @@ export default function OnboardingWelcomeScreen() {
               <Text className="text-navy font-semibold text-center">
                 🤖 AI Health Assistant
               </Text>
-              <Text className="text-ash text-sm text-center mt-1">
+              <Text className="text-black text-sm text-center mt-1">
                 Get personalized health guidance 24/7
               </Text>
             </View>
@@ -39,7 +40,7 @@ export default function OnboardingWelcomeScreen() {
               <Text className="text-navy font-semibold text-center">
                 📊 Comprehensive Tracking
               </Text>
-              <Text className="text-ash text-sm text-center mt-1">
+              <Text className="text-black text-sm text-center mt-1">
                 Monitor symptoms, medications, and nutrition
               </Text>
             </View>
@@ -48,7 +49,7 @@ export default function OnboardingWelcomeScreen() {
               <Text className="text-navy font-semibold text-center">
                 🏆 Gamified Wellness
               </Text>
-              <Text className="text-ash text-sm text-center mt-1">
+              <Text className="text-black text-sm text-center mt-1">
                 Achieve health goals with rewards and insights
               </Text>
             </View>
@@ -56,7 +57,7 @@ export default function OnboardingWelcomeScreen() {
         </OnboardingCard>
 
         <View className="bg-ivory/10 rounded-xl p-4 mt-6">
-          <Text className="text-ivory/80 text-sm text-center">
+          <Text className="text-black text-sm text-center">
             ⏱️ Setup takes about 5 minutes
           </Text>
         </View>
