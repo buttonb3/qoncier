@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Pressable, TextInput, Modal, Image, Alert } from "react-native";
+import { View, Text, ScrollView, Pressable, TextInput, Modal, Image, Alert, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -7,7 +7,8 @@ import * as ImagePicker from "expo-image-picker";
 import { useHealthStore } from "../state/healthStore";
 import { useUIStore } from "../state/uiStore";
 import { NutritionEntry } from "../types/health";
-import { getOpenAIChatResponse } from "../api/chat-service";
+import { analyzeImageWithOpenAI } from "../api/chat-service";
+import PhotoSourceModal from "../components/PhotoSourceModal";
 
 export default function NutritionScreen() {
   const { nutritionEntries, addNutritionEntry, deleteNutritionEntry } = useHealthStore();
@@ -15,6 +16,7 @@ export default function NutritionScreen() {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
+  const [showPhotoSourceModal, setShowPhotoSourceModal] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [newEntry, setNewEntry] = useState({
     name: "",
@@ -77,21 +79,83 @@ export default function NutritionScreen() {
     setShowCameraModal(true);
   };
 
-  const handlePhotoCapture = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
-    });
+  const handleAnalyzeFood = () => {
+    setShowPhotoSourceModal(true);
+  };
 
-    if (!result.canceled && result.assets[0]) {
-      setCapturedImage(result.assets[0].uri);
-      analyzeFood(result.assets[0].uri);
+  const handleTakePhoto = async () => {
+    setShowPhotoSourceModal(false);
+    
+    // Check camera permissions
+    if (!cameraPermission?.granted) {
+      const permissionResult = await requestCameraPermission();
+      if (!permissionResult.granted) {
+        Alert.alert(
+          "Camera Permission Required",
+          "Please allow camera access to take photos of your food for analysis.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Open Settings", onPress: () => Linking.openSettings() }
+          ]
+        );
+        return;
+      }
+    }
+
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setCapturedImage(result.assets[0].uri);
+        analyzeFood(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Camera error:", error);
+      Alert.alert("Camera Error", "Could not access camera. Please try again.");
     }
   };
 
-  const analyzeFood = async (_imageUri: string) => {
+  const handleChooseFromLibrary = async () => {
+    setShowPhotoSourceModal(false);
+    
+    // Check media library permissions
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        "Photo Library Permission Required",
+        "Please allow photo library access to select images for analysis.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Open Settings", onPress: () => Linking.openSettings() }
+        ]
+      );
+      return;
+    }
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setCapturedImage(result.assets[0].uri);
+        analyzeFood(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Library error:", error);
+      Alert.alert("Library Error", "Could not access photo library. Please try again.");
+    }
+  };
+
+  const analyzeFood = async (imageUri: string) => {
     setIsAnalyzing(true);
     try {
       const prompt = `Analyze this food image and provide nutritional information in this exact format:
@@ -102,17 +166,17 @@ export default function NutritionScreen() {
       Carbs: [number]g
       Fat: [number]g
       
-      Be as accurate as possible with the estimates.`;
+      Be as accurate as possible with the estimates based on what you can see in the image.`;
 
-      const response = await getOpenAIChatResponse(prompt);
+      const response = await analyzeImageWithOpenAI(imageUri, prompt);
       
       // Parse the AI response to extract nutrition data
       const lines = response.content.split('\n');
-      const foodName = lines.find(line => line.includes('Food Name:'))?.split(':')[1]?.trim() || 'Unknown Food';
-      const calories = lines.find(line => line.includes('Calories:'))?.match(/\d+/)?.[0] || '0';
-      const protein = lines.find(line => line.includes('Protein:'))?.match(/\d+/)?.[0] || '0';
-      const carbs = lines.find(line => line.includes('Carbs:'))?.match(/\d+/)?.[0] || '0';
-      const fat = lines.find(line => line.includes('Fat:'))?.match(/\d+/)?.[0] || '0';
+      const foodName = lines.find((line: string) => line.includes('Food Name:'))?.split(':')[1]?.trim() || 'Unknown Food';
+      const calories = lines.find((line: string) => line.includes('Calories:'))?.match(/\d+/)?.[0] || '0';
+      const protein = lines.find((line: string) => line.includes('Protein:'))?.match(/\d+/)?.[0] || '0';
+      const carbs = lines.find((line: string) => line.includes('Carbs:'))?.match(/\d+/)?.[0] || '0';
+      const fat = lines.find((line: string) => line.includes('Fat:'))?.match(/\d+/)?.[0] || '0';
 
       setNewEntry({
         ...newEntry,
@@ -125,7 +189,14 @@ export default function NutritionScreen() {
       
       setShowAddModal(true);
     } catch (error) {
-      Alert.alert("Analysis Error", "Could not analyze the food image. Please enter details manually.");
+      console.error("Food analysis error:", error);
+      Alert.alert(
+        "Analysis Error", 
+        "Could not analyze the food image. Please enter details manually.",
+        [
+          { text: "OK", onPress: () => setShowAddModal(true) }
+        ]
+      );
     } finally {
       setIsAnalyzing(false);
     }
@@ -230,12 +301,12 @@ export default function NutritionScreen() {
             </Pressable>
             
             <Pressable
-              onPress={handlePhotoCapture}
+              onPress={handleAnalyzeFood}
               className="flex-1 bg-navy rounded-xl p-4 items-center"
             >
               <Ionicons name="camera-outline" size={24} color="#F9F6F1" />
               <Text className="text-ivory font-semibold mt-2">
-                Photo Analysis
+                Analyze Food
               </Text>
             </Pressable>
           </View>
@@ -559,6 +630,14 @@ export default function NutritionScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Photo Source Selection Modal */}
+      <PhotoSourceModal
+        visible={showPhotoSourceModal}
+        onClose={() => setShowPhotoSourceModal(false)}
+        onTakePhoto={handleTakePhoto}
+        onChooseFromLibrary={handleChooseFromLibrary}
+      />
     </SafeAreaView>
   );
 }

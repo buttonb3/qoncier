@@ -105,6 +105,84 @@ export const getOpenAIChatResponse = async (prompt: string): Promise<AIResponse>
 };
 
 /**
+ * Analyze an image with OpenAI GPT-4o
+ * @param imageUri - The local image URI to analyze
+ * @param prompt - The analysis prompt
+ * @returns The response from the AI
+ */
+export const analyzeImageWithOpenAI = async (imageUri: string, prompt: string): Promise<AIResponse> => {
+  try {
+    const client = getOpenAIClient();
+    
+    // Convert image to base64
+    const base64Image = await convertImageToBase64(imageUri);
+    
+    const response = await client.chat.completions.create({
+      model: "gpt-4o", // GPT-4o supports vision
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: prompt,
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`,
+                detail: "high",
+              },
+            },
+          ],
+        } as any, // Type assertion to handle OpenAI's specific message format
+      ],
+      temperature: 0.7,
+      max_tokens: 2048,
+    });
+
+    return {
+      content: response.choices[0]?.message?.content || "",
+      usage: {
+        promptTokens: response.usage?.prompt_tokens || 0,
+        completionTokens: response.usage?.completion_tokens || 0,
+        totalTokens: response.usage?.total_tokens || 0,
+      },
+    };
+  } catch (error) {
+    console.error("OpenAI image analysis error:", error);
+    throw new Error("Failed to analyze image with OpenAI");
+  }
+};
+
+/**
+ * Convert image URI to base64 string
+ * @param imageUri - The local image URI
+ * @returns Base64 encoded image string
+ */
+const convertImageToBase64 = async (imageUri: string): Promise<string> => {
+  try {
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+    
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = reader.result as string;
+        // Remove the data URL prefix (data:image/jpeg;base64,)
+        const base64 = base64data.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Image conversion error:", error);
+    throw new Error("Failed to convert image to base64");
+  }
+};
+
+/**
  * Get a text response from Grok
  * @param messages - The messages to send to the AI
  * @param options - The options for the request
