@@ -7,26 +7,30 @@ import {
   Pressable, 
   KeyboardAvoidingView, 
   Platform,
-  ActivityIndicator 
+  ActivityIndicator,
+  Alert 
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { Audio } from "expo-av";
 import { useChatStore } from "../state/chatStore";
 import { useUIStore } from "../state/uiStore";
-// import { useHealthStore } from "../state/healthStore";
+import { useHealthStore } from "../state/healthStore";
 import { getOpenAIChatResponse } from "../api/chat-service";
+import { transcribeAudio } from "../api/transcribe-audio";
 import { ChatMessage } from "../types/health";
 import ChatBubble from "../components/ChatBubble";
 import EmergencyModal from "../components/EmergencyModal";
 
 export default function AssistantScreen() {
   const [inputText, setInputText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   
   const { messages, addMessage, isLoading, setLoading } = useChatStore();
   const { setShowEmergencyModal } = useUIStore();
-  // Health store for future action logging
-  // const healthStore = useHealthStore();
+  const { symptoms, medications, nutritionEntries } = useHealthStore();
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages are added
@@ -34,6 +38,66 @@ export default function AssistantScreen() {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 100);
   }, [messages]);
+
+  useEffect(() => {
+    // Add welcome message if no messages exist
+    if (messages.length === 0) {
+      const welcomeMessage: ChatMessage = {
+        id: "welcome",
+        content: "Hello! I'm your AI health assistant. I can help you track symptoms, manage medications, analyze nutrition, and answer health-related questions. How can I assist you today?",
+        role: "assistant",
+        timestamp: new Date().toISOString(),
+        type: "text",
+      };
+      addMessage(welcomeMessage);
+    }
+  }, []);
+
+  const startRecording = async () => {
+    try {
+      const { status } = await Audio.requestPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Required", "Please allow microphone access to use voice input.");
+        return;
+      }
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Failed to start recording:", error);
+      Alert.alert("Recording Error", "Could not start voice recording. Please try again.");
+    }
+  };
+
+  const stopRecording = async () => {
+    if (!recording) return;
+
+    setIsRecording(false);
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI();
+    setRecording(null);
+
+    if (uri) {
+      setLoading(true);
+      try {
+        const transcription = await transcribeAudio(uri);
+        setInputText(transcription);
+      } catch (error) {
+        console.error("Transcription error:", error);
+        Alert.alert("Transcription Error", "Could not transcribe audio. Please try typing instead.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || isLoading) return;
@@ -51,13 +115,23 @@ export default function AssistantScreen() {
     setLoading(true);
 
     try {
+      // Create health context from user data
+      const healthContext = `
+Current Health Data:
+- Recent Symptoms: ${symptoms.slice(0, 3).map(s => `${s.name} (${s.severity}/5)`).join(", ") || "None"}
+- Active Medications: ${medications.filter(m => m.isActive).map(m => `${m.name} ${m.dosage}`).join(", ") || "None"}
+- Recent Nutrition: ${nutritionEntries.slice(0, 3).map(n => `${n.name} (${n.calories} cal)`).join(", ") || "None"}
+      `;
+
       // Create health-focused system prompt
       const systemPrompt = `You are Qoncier, an AI health assistant. You help users track symptoms, medications, nutrition, and provide health guidance. 
 
+${healthContext}
+
 Key capabilities:
-- Answer health-related questions
+- Answer health-related questions using the user's health data context
 - Help log symptoms, medications, and nutrition
-- Provide health insights and recommendations
+- Provide personalized health insights and recommendations
 - Offer emergency guidance when needed
 
 Important: 
@@ -65,6 +139,7 @@ Important:
 - Be empathetic and supportive
 - Keep responses concise and actionable
 - If user mentions emergency symptoms, suggest they seek immediate medical attention
+- Reference their existing health data when relevant
 
 User message: ${inputText}`;
 
@@ -79,12 +154,6 @@ User message: ${inputText}`;
       };
 
       addMessage(assistantMessage);
-
-      // Check if the response suggests logging something
-      const content = response.content.toLowerCase();
-      if (content.includes("log") && content.includes("symptom")) {
-        // Could add automatic symptom logging suggestion here
-      }
 
     } catch (error) {
       console.error("Chat error:", error);
@@ -167,6 +236,19 @@ User message: ${inputText}`;
                 onSubmitEditing={handleSendMessage}
               />
             </View>
+            
+            <Pressable
+              onPress={isRecording ? stopRecording : startRecording}
+              className={`rounded-full p-3 mr-2 ${
+                isRecording ? "bg-danger" : "bg-gold"
+              }`}
+            >
+              <Ionicons 
+                name={isRecording ? "stop" : "mic"} 
+                size={20} 
+                color={isRecording ? "white" : "#1C1C2E"} 
+              />
+            </Pressable>
             
             <Pressable
               onPress={handleSendMessage}

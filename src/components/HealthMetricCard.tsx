@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withSpring, 
+  withDelay 
+} from "react-native-reanimated";
 
 interface HealthMetricCardProps {
   title: string;
@@ -21,6 +27,18 @@ export default function HealthMetricCard({
   trendValue,
   color = "neutral",
 }: HealthMetricCardProps) {
+  const scale = useSharedValue(0.8);
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    scale.value = withDelay(Math.random() * 200, withSpring(1));
+    opacity.value = withDelay(Math.random() * 200, withSpring(1));
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
   const getColorClasses = () => {
     switch (color) {
       case "success":
@@ -57,7 +75,7 @@ export default function HealthMetricCard({
   };
 
   return (
-    <View className={`rounded-xl p-4 border ${getColorClasses()}`}>
+    <Animated.View style={animatedStyle} className={`rounded-xl p-4 border ${getColorClasses()}`}>
       <View className="flex-row items-center justify-between mb-2">
         <Ionicons name={icon} size={24} color="#1C1C2E" />
         {trend && trendValue && (
@@ -83,6 +101,6 @@ export default function HealthMetricCard({
       </Text>
       
       <Text className="text-ash text-sm mt-1">{title}</Text>
-    </View>
+    </Animated.View>
   );
 }
