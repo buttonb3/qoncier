@@ -56,14 +56,20 @@ export default function OnboardingWelcomeScreen() {
           </View>
         </OnboardingCard>
 
-        <View className="bg-ivory/10 rounded-xl p-4 mt-6">
-          <Text className="text-black text-sm text-center">
-            ⏱️ Setup takes about 5 minutes
+        <View className="mt-8 mb-4">
+          <Text className="text-black text-sm text-center italic">
+            "People don't care how much you know until they know how much you care." — Author unknown
+          </Text>
+          <Text className="text-black text-sm text-center mt-2">
+            At Qoncier, your story is the foundation, science is the support.
           </Text>
         </View>
       </View>
 
       <View className="pb-8">
+        <Text className="text-black text-sm text-center mb-4">
+          ⏱️ Setup takes about 5 minutes
+        </Text>
         <OnboardingButton
           title="Get Started"
           onPress={handleGetStarted}

@@ -1,0 +1,39 @@
+{
+  "name": "qoncier-monorepo",
+  "version": "1.0.0",
+  "description": "Qoncier - AI-powered personal health assistant",
+  "private": true,
+  "workspaces": [
+    "mobile",
+    "web",
+    "shared"
+  ],
+  "scripts": {
+    "dev:web": "next dev -p 3000",
+    "build:web": "next build",
+    "start:web": "next start -p 3000",
+    "dev:mobile": "yarn workspace @qoncier/mobile start",
+    "build:mobile": "yarn workspace @qoncier/mobile build",
+    "lint": "yarn workspaces run lint",
+    "lint:fix": "yarn workspaces run lint:fix",
+    "test": "yarn workspaces run test",
+    "type-check": "yarn workspaces run type-check",
+    "clean": "yarn workspaces run clean && rm -rf node_modules",
+    "install:all": "yarn install",
+    "mobile:ios": "yarn workspace @qoncier/mobile ios",
+    "mobile:android": "yarn workspace @qoncier/mobile android"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=1.22.0"
+  }
+}
