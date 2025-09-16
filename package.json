@@ -8,9 +8,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "node build-web.js",
-    "vercel-build": "node build-web.js",
-    "build:web": "node build-web.js"
+    "build": "node -e \"const fs=require('fs');const path=require('path');console.log('Building web app...');if(!fs.existsSync('./dist'))fs.mkdirSync('./dist');fs.copyFileSync('./index.html','./dist/index.html');fs.copyFileSync('./index.web.js','./dist/bundle.js');if(fs.existsSync('./global.css'))fs.copyFileSync('./global.css','./dist/global.css');console.log('Build complete!');\"",
+    "vercel-build": "node -e \"const fs=require('fs');const path=require('path');console.log('Building web app...');if(!fs.existsSync('./dist'))fs.mkdirSync('./dist');fs.copyFileSync('./index.html','./dist/index.html');fs.copyFileSync('./index.web.js','./dist/bundle.js');if(fs.existsSync('./global.css'))fs.copyFileSync('./global.css','./dist/global.css');console.log('Build complete!');\"",
+    "build:web": "node -e \"const fs=require('fs');const path=require('path');console.log('Building web app...');if(!fs.existsSync('./dist'))fs.mkdirSync('./dist');fs.copyFileSync('./index.html','./dist/index.html');fs.copyFileSync('./index.web.js','./dist/bundle.js');if(fs.existsSync('./global.css'))fs.copyFileSync('./global.css','./dist/global.css');console.log('Build complete!');\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
