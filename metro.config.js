@@ -7,4 +7,7 @@ const config = getDefaultConfig(__dirname);
 
 config.resolver.useWatchman = false;
 
+// Web-specific optimizations
+config.resolver.platforms = ['ios', 'android', 'native', 'web'];
+
 module.exports = withNativeWind(config, { input: './global.css' });

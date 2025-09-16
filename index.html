@@ -5,243 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qoncier - AI Health Assistant</title>
     <style>
-        * {
+        html, body, #root {
+            height: 100%;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            padding: 60px 0;
-            color: white;
-        }
-        
-        .title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .subtitle {
-            font-size: 1.5rem;
-            opacity: 0.9;
-            margin-bottom: 40px;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin: 60px 0;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        
-        .feature-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-        
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2563eb;
-            margin-bottom: 15px;
-        }
-        
-        .feature-description {
-            font-size: 1.1rem;
-            color: #64748b;
-            line-height: 1.6;
-        }
-        
-        .cta-section {
-            text-align: center;
-            margin: 80px 0;
-        }
-        
-        .cta-buttons {
+        #root {
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
-        }
-        
-        .btn {
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-        }
-        
-        .btn-secondary:hover {
-            background: white;
-            color: #2563eb;
-        }
-        
-        .quote {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            color: white;
-            margin: 60px 0;
-        }
-        
-        .quote-text {
-            font-size: 1.3rem;
-            font-style: italic;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        
-        .qoncier-text {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 40px 0;
-            color: white;
-            opacity: 0.8;
-        }
-        
-        @media (max-width: 768px) {
-            .title {
-                font-size: 2.5rem;
-            }
-            
-            .subtitle {
-                font-size: 1.2rem;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
-            }
+            flex-direction: column;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">Welcome to Qoncier</h1>
-            <p class="subtitle">Your AI-powered personal health assistant</p>
-        </div>
-        
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <h3 class="feature-title">AI Health Assistant</h3>
-                <p class="feature-description">
-                    Get personalized health guidance 24/7 with our advanced AI technology
-                </p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">Comprehensive Tracking</h3>
-                <p class="feature-description">
-                    Monitor symptoms, medications, and nutrition with detailed analytics
-                </p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">🏆</div>
-                <h3 class="feature-title">Gamified Wellness</h3>
-                <p class="feature-description">
-                    Achieve health goals with rewards, insights, and progress tracking
-                </p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3 class="feature-title">Mobile & Web</h3>
-                <p class="feature-description">
-                    Access your health data anywhere, anytime across all devices
-                </p>
-            </div>
-        </div>
-        
-        <div class="cta-section">
-            <div class="cta-buttons">
-                <button class="btn btn-primary" onclick="alert('Coming soon!')">Get Started</button>
-                <button class="btn btn-secondary" onclick="alert('Learn more about Qoncier!')">Learn More</button>
-            </div>
-        </div>
-        
-        <div class="quote">
-            <p class="quote-text">
-                "People don't care how much you know until they know how much you care."
-            </p>
-            <p class="qoncier-text">
-                At Qoncier, your story is the foundation, science is the support.
-            </p>
-        </div>
-        
-        <div class="footer">
-            <p>&copy; 2024 Qoncier. All rights reserved.</p>
-        </div>
-    </div>
+    <div id="root"></div>
+    <script src="./index.web.js"></script>
 </body>
 </html>

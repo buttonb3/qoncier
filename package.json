@@ -2,13 +2,15 @@
   "name": "template-app-53",
   "version": "1.0.0",
   "main": "index.ts",
+  "browser": "index.web.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export --platform web",
-    "vercel-build": "expo export --platform web"
+    "build": "node build-web.js",
+    "vercel-build": "node build-web.js",
+    "build:web": "node build-web.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -107,6 +109,7 @@
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
     "react-native-svg": "15.11.2",
+    "react-native-url-polyfill": "^2.0.0",
     "react-native-view-shot": "~4.0.3",
     "react-native-vision-camera": "^4.6.4",
     "react-native-web": "~0.20.0",
@@ -120,6 +123,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/minimatch": "^6.0.0",
     "@types/react": "~19.0.10",
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",

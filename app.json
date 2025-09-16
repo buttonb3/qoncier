@@ -10,7 +10,8 @@
     "platforms": ["ios", "android", "web"],
     "web": {
       "bundler": "webpack",
-      "output": "dist"
+      "output": "dist",
+      "favicon": "./assets/favicon.png"
     },
     "ios": {
       "supportsTablet": true
