@@ -7,8 +7,10 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "platforms": ["ios", "android", "web"],
     "web": {
-      "bundler": "metro"
+      "bundler": "webpack",
+      "output": "dist"
     },
     "ios": {
       "supportsTablet": true
