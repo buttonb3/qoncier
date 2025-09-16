@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "echo 'Building static HTML'",
+  "outputDirectory": ".",
+  "installCommand": "echo 'No dependencies needed'",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/qoncier-web.html"
+    }
+  ]
+}
