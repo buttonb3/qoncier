@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "expo export --platform web",
-  "outputDirectory": "dist",
+  "buildCommand": "npx expo export --platform web --output-dir static",
+  "outputDirectory": "static",
   "installCommand": "bun install",
   "framework": null,
   "functions": {},
