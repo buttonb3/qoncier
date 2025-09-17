@@ -37,4 +37,3 @@ yarn-error.*
 ios/
 android/
 
-# trigger redeploy
