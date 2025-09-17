@@ -52,8 +52,9 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!_expo|assets|metadata\\.json).*)",
+      "source": "/((?!_expo|assets|index\\.html|metadata\\.json).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "_note": "trigger redeploy"
 }
