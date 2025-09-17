@@ -52,7 +52,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!_expo|assets|index\\.html|metadata\\.json).*)",
+      "source": "/((?!_expo|assets|metadata\\.json).*)",
       "destination": "/index.html"
     }
   ]
